@@ -29,3 +29,7 @@ def generate_token(request: UserLogin, db: Session = Depends(get_db)):
     return {
         'access_token': access_token
     }
+    
+@router.get("/token/status", response_model=UserDisplay)
+def verify_token(user:UserBase = Depends(get_current_user)):
+    return user  

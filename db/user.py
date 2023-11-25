@@ -14,3 +14,7 @@ def create_user_func(db: Session, request: UserBase):
     db.commit()
     db.refresh(new_user)
     return new_user
+
+def get_user_by_username(db: Session, username: str):
+     user = db.query(DbUser).filter(DbUser.username == username).first()
+     return user

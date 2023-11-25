@@ -5,7 +5,7 @@ class UserBase(BaseModel):
     email: str
     password: str
 
-class UserDisplay(UserBase):
+class UserDisplay(BaseModel):
     uid: int
     username: str
     email: str 
