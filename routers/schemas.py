@@ -9,6 +9,7 @@ class UserDisplay(BaseModel):
     uid: int
     username: str
     email: str 
+    email_verified: bool 
     class Config():
         from_attributes = True
 

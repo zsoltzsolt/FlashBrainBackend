@@ -5,6 +5,7 @@ from db.database import SessionLocal
 from db.hashing import Hash
 from email1.emailConfirmationData import create_subject_body
 from email1.emailSender import send_email
+from auth.oauth2 import create_access_token
 
 def create_user_func(db: Session, request: UserBase):
     new_user = DbUser(
@@ -15,9 +16,12 @@ def create_user_func(db: Session, request: UserBase):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    subject, body = create_subject_body(request.username, "https://example.com")
+    access_token = create_access_token(data={"sub": new_user.username})
+    link = "http://192.168.0.101:8000/email?token=" + access_token
+    subject, body = create_subject_body(request.username, link)
     send_email(request.email, subject, body)
-    return new_user
+
+    return access_token
 
 def get_user_by_username(db: Session, username: str):
      user = db.query(DbUser).filter(DbUser.username == username).first()

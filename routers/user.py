@@ -21,12 +21,10 @@ router = APIRouter(
 @router.post("/")
 def create_user(request: UserBase, db: Session = Depends(get_db)):
     try:
-        user = create_user_func(db, request)
+        access_token = create_user_func(db, request)
 
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username or email already in use")
-
-    access_token = create_access_token(data={'sub': user.username}, expires_delta=timedelta(minutes=60))
 
     return {
         'access_token': access_token

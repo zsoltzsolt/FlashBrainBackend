@@ -42,11 +42,14 @@ def get_current_user(token: str = Depends(oauth2_schema), db: Session = Depends(
 
      if user1 is None:
          raise credentials_exception
-     
-     if user1.email_verified == False:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email is not verified!")
 
      return user1
+ 
+def get_current_active_user(token: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
+    current_user = get_current_user(token, db)
+    if current_user.email_verified == False:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email is not verified!")
+    return current_user
 
 
 

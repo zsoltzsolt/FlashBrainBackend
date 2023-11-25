@@ -10,6 +10,7 @@ from db.hashing import Hash
 from auth.oauth2 import create_access_token
 from datetime import timedelta
 from auth.oauth2 import get_current_user
+from auth.oauth2 import get_current_active_user
 
 router = APIRouter(
     prefix="/auth",
@@ -31,5 +32,5 @@ def generate_token(request: UserLogin, db: Session = Depends(get_db)):
     }
     
 @router.get("/token/status", response_model=UserDisplay)
-def verify_token(user:UserBase = Depends(get_current_user)):
+def verify_token(db:Session = Depends(get_db), user:UserBase = Depends(get_current_active_user)):
     return user  
