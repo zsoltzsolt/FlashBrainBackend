@@ -6,6 +6,7 @@ from db.hashing import Hash
 from email1.emailConfirmationData import create_subject_body
 from email1.emailSender import send_email
 from auth.oauth2 import create_access_token
+import os
 
 def create_user_func(db: Session, request: UserBase):
     new_user = DbUser(
@@ -17,7 +18,7 @@ def create_user_func(db: Session, request: UserBase):
     db.commit()
     db.refresh(new_user)
     access_token = create_access_token(data={"sub": new_user.username})
-    link = "http://192.168.0.101:8000/email?token=" + access_token
+    link = os.environ.get("HOST_URL") + "email?token=" + access_token
     subject, body = create_subject_body(request.username, link)
     send_email(request.email, subject, body)
 
