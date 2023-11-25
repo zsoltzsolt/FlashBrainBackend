@@ -1,13 +1,17 @@
 from pydantic import BaseModel
 
 class UserBase(BaseModel):
-    name: str
+    username: str
     email: str
     password: str
 
 class UserDisplay(UserBase):
     uid: int
-    name: str
+    username: str
     email: str 
     class Config():
-        orm_mode = True
+        from_attributes = True
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
