@@ -5,6 +5,7 @@ from sqlalchemy.orm.session import Session
 from fastapi.params import Query
 from auth.oauth2 import get_current_user
 from routers.schemas import UserDisplay
+from fastapi.responses import RedirectResponse
 
 router = APIRouter( 
     prefix = "/email", 
@@ -17,4 +18,4 @@ async def email(token: str, db:Session = Depends(get_db)):
     user.email_verified = True
     db.commit()
     db.refresh(user)
-    return "Email verified"
+    return RedirectResponse("http://localhost:3000/", status_code=302)
