@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List, Optional
 
 class UserBase(BaseModel):
     username: str
@@ -16,3 +17,7 @@ class UserDisplay(BaseModel):
 class UserLogin(BaseModel):
     username: str
     password: str
+    
+class PDFBase(BaseModel):
+    ownerId: int
+    isPublic: bool
