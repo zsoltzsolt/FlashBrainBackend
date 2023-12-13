@@ -18,6 +18,9 @@ class UserLogin(BaseModel):
     username: str
     password: str
     
-class PDFBase(BaseModel):
+class SummarySourceBase(BaseModel):
     ownerId: int
     isPublic: bool
+    
+class YouTubeBase(BaseModel):
+    url: str

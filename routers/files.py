@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from fastapi import UploadFile, File, Depends
-from routers.schemas import PDFBase
+from routers.schemas import SummarySourceBase
 from sqlalchemy.orm.session import Session
 from db.database import get_db
 import shutil
@@ -10,9 +10,9 @@ router = APIRouter(
     tags=["File"]
 )
 
-@router.post("/file")
+@router.post("/")
 def getFile(
-    request: PDFBase = Depends(),
+    request: SummarySourceBase = Depends(),
     uploadFile: UploadFile = File(...),
     db: Session = Depends(get_db)
     ):
@@ -22,3 +22,4 @@ def getFile(
     return {
         "message" : "File uploaded successfully"
     }
+    
