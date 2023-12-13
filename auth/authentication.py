@@ -12,6 +12,7 @@ from datetime import timedelta
 from auth.oauth2 import get_current_user
 from auth.oauth2 import get_current_active_user
 
+
 router = APIRouter(
     prefix="/auth",
     tags=["User"]
