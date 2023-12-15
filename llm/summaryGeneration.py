@@ -7,7 +7,7 @@ from langchain.chains.llm import LLMChain
 from langchain.prompts import PromptTemplate
 from config import OPENAI_API_KEY
 
-def generate_metadata(path: str) -> dict:
+def generate_metadata(path: str):
     loader = PyPDFLoader(path)
     docs = loader.load()
 
@@ -24,7 +24,7 @@ def generate_metadata(path: str) -> dict:
     docs = loader.load()
     return stuff_chain.run(docs)
 
-def generate_summaries(path: str) -> str:
+def generate_summaries(path: str):
     loader = PyPDFLoader(path)
     docs = loader.load()
     prompt_template = """Summarize the following text in exactly 5, 2-3 sentence ideas formatted as a json. The number of ideas HAS to be 5,10 or 15. The json should be a list containing the generated ideas, and each idea has a 'title' and 'content' keys. This is the text:

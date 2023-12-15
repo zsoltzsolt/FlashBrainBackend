@@ -1,6 +1,16 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+class SummaryDisplay(BaseModel):
+    summaryId: int
+    title: str
+    ownerId: int
+    categoryId: int
+    flashCards: List[dict] = []
+    isPublic: bool
+    class Config():
+        from_attributes = True
+
 class UserBase(BaseModel):
     username: str
     email: str
@@ -10,7 +20,8 @@ class UserDisplay(BaseModel):
     uid: int
     username: str
     email: str 
-    email_verified: bool 
+    emailVerified: bool
+    summaries: List[SummaryDisplay]
     class Config():
         from_attributes = True
 
@@ -21,6 +32,23 @@ class UserLogin(BaseModel):
 class SummarySourceBase(BaseModel):
     ownerId: int
     isPublic: bool
+    
+class SummaryBase(BaseModel):
+    title: str
+    ownerId: int
+    categoryId: int
+    isPublic: bool
+    path: str
+    
+    
+class FlashCardBase(BaseModel):
+    title: str
+    content: str
+    imagePath: str
+    summaryId: int
+    class Config():
+        from_attributes = True
+    
     
 class YouTubeBase(BaseModel):
     url: str
