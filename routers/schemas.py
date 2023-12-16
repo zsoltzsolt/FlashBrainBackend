@@ -11,11 +11,6 @@ class SummaryDisplay(BaseModel):
     class Config():
         from_attributes = True
 
-class UserBase(BaseModel):
-    username: str
-    email: str
-    password: str
-
 class UserDisplay(BaseModel):
     uid: int
     username: str
@@ -24,6 +19,11 @@ class UserDisplay(BaseModel):
     summaries: List[SummaryDisplay]
     class Config():
         from_attributes = True
+        
+class UserBase(BaseModel):
+    username: str
+    email: str
+    password: str
 
 class UserLogin(BaseModel):
     username: str
@@ -39,7 +39,6 @@ class SummaryBase(BaseModel):
     categoryId: int
     isPublic: bool
     path: str
-    
     
 class FlashCardBase(BaseModel):
     title: str
