@@ -1,12 +1,20 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+class FlashCardDisplay(BaseModel):
+    title: str
+    content: str
+    imagePath: str
+    summaryId: int
+    class Config():
+        from_attributes = True
+
 class SummaryDisplay(BaseModel):
     summaryId: int
     title: str
     ownerId: int
     categoryId: int
-    flashCards: List[dict] = []
+    flashcards: List[FlashCardDisplay] = []
     isPublic: bool
     class Config():
         from_attributes = True
@@ -16,7 +24,7 @@ class UserDisplay(BaseModel):
     username: str
     email: str 
     emailVerified: bool
-    summaries: List[SummaryDisplay]
+    summaries: List[SummaryDisplay] = []
     class Config():
         from_attributes = True
         
@@ -47,7 +55,7 @@ class FlashCardBase(BaseModel):
     summaryId: int
     class Config():
         from_attributes = True
-    
-    
+
+
 class YouTubeBase(BaseModel):
     url: str
