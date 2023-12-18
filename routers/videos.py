@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 def getIdFromUrl(url):
-    return url.split("=")[-1]
+    return url.split("/")[-1]
 
 @router.post("/")
 def getVideo(
@@ -27,5 +27,5 @@ def getVideo(
                           ownerId=request.ownerId, 
                           categoryId=1, 
                           isPublic=request.isPublic, 
-                          path=getIdFromUrl(youtube.url))
+                          path=youtube.url)
     return YoutubeSummaryGenerator().generate_summary(summary, db)

@@ -5,7 +5,6 @@ from langchain.document_loaders import PyPDFLoader
 from langchain.chains.combine_documents.stuff import StuffDocumentsChain
 from langchain.chains.llm import LLMChain
 from langchain.prompts import PromptTemplate
-from config import OPENAI_API_KEY
 from langchain.document_loaders import YoutubeLoader
 from abc import ABC, abstractmethod
 from db.models import DbSummary
@@ -15,6 +14,7 @@ from routers.schemas import SummarySourceBase, SummaryBase, FlashCardBase
 from db.flashcard import create_flash_card
 import json
 from fastapi import Depends
+import os
 
 class SummaryGenerator(ABC):
     
@@ -31,7 +31,7 @@ class SummaryGenerator(ABC):
         "{text}" """
         prompt = PromptTemplate.from_template(prompt_template)
 
-        llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo-16k", api_key=OPENAI_API_KEY)
+        llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo-16k", api_key=os.environ.get("OPENAI_API_KEY"))
         llm_chain = LLMChain(llm=llm, prompt=prompt)
 
         stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
@@ -46,7 +46,7 @@ class SummaryGenerator(ABC):
         "{text}" """
         prompt = PromptTemplate.from_template(prompt_template)
 
-        llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo-16k", api_key=OPENAI_API_KEY)
+        llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo-16k", api_key=os.environ.get("OPENAI_API_KEY"))
         llm_chain = LLMChain(llm=llm, prompt=prompt)
 
         stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
