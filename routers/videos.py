@@ -12,15 +12,20 @@ router = APIRouter(
     tags=["Video"]
 )
 
+def getIdFromUrl(url):
+    return url.split("=")[-1]
+
 @router.post("/")
 def getVideo(
     youtube: YouTubeBase,
     request: SummarySourceBase = Depends(),
     db: Session = Depends(get_db)
 ):
+    # We get the url but we need to get the id
+     
     summary = SummaryBase(title="", 
                           ownerId=request.ownerId, 
                           categoryId=1, 
                           isPublic=request.isPublic, 
-                          path=youtube.url)
+                          path=getIdFromUrl(youtube.url))
     return YoutubeSummaryGenerator().generate_summary(summary, db)
