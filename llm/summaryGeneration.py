@@ -17,17 +17,17 @@ from fastapi import Depends
 import os
 
 class SummaryGenerator(ABC):
-    
+
     @abstractmethod
     def get_loader(self, path: str):
         pass
-    
-    def generate_metadata(self, path: str):
+
+    async def generate_metadata(self, path: str):
         loader = self.get_loader(path)
         docs = loader.load()
 
-        prompt_template = """Return a this information: 'title' and 'category' in json format where 'title' represents a sugestive title for the following
-        text and 'category' spcifies the number coresponding to the correct category: 2 (math), 3 (science), 4 (history), 5 (languages), 6 (computer science), 7 (geography), 8 (economics), 9 (others). 
+        prompt_template = """Return a this information: 'title' and 'category' in json format where 'title' represents a suggestive title for the following
+        text and 'category' specifies the number corresponding to the correct category: 2 (math), 3 (science), 4 (history), 5 (languages), 6 (computer science), 7 (geography), 8 (economics), 9 (others). 
         "{text}" """
         prompt = PromptTemplate.from_template(prompt_template)
 
@@ -39,7 +39,8 @@ class SummaryGenerator(ABC):
         docs = loader.load()
         return stuff_chain.run(docs)
 
-    def generate_summaries(self, path: str):
+
+    async def generate_summaries(self, path: str):
         loader = self.get_loader(path)
         docs = loader.load()
         prompt_template = """Summarize the following text in exactly 5, 2-3 sentence ideas formatted as a json. The number of ideas HAS to be 5,10 or 15. The json should be a list containing the generated ideas, and each idea has a 'title' and 'content' keys. This is the text:
@@ -52,24 +53,27 @@ class SummaryGenerator(ABC):
         stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
 
         docs = loader.load()
-        v = stuff_chain.run(docs)
+        v = stuff_chain.run(docs)  # Modificarea aici
         print(v)
         return v
-    def generate_summary(self, request: SummarySourceBase, db: Session = Depends(get_db)):
-    
-        title_category = self.generate_metadata(request.path)
+       
+
+
+    async def generate_summary(self, request: SummarySourceBase, db: Session = Depends(get_db)):
+
+        title_category = await self.generate_metadata(request.path)
         print(title_category)
         newJsonMeta = json.loads(title_category)
-        
-        message = self.generate_summaries(request.path)
+
+        message = await self.generate_summaries(request.path)
         newJson = json.loads(message)
         print(newJson)
-        
+
         new_summary = DbSummary(
-            title = newJsonMeta["title"],
-            ownerId = request.ownerId,
-            categoryId = newJsonMeta["category"],
-            isPublic = request.isPublic
+            title=newJsonMeta["title"],
+            ownerId=request.ownerId,
+            categoryId=newJsonMeta["category"],
+            isPublic=request.isPublic
         )
         db.add(new_summary)
         db.commit()
@@ -83,15 +87,14 @@ class SummaryGenerator(ABC):
                 summaryId=new_summary.summaryId
             )
             create_flash_card(new_flash, db)
-        
+
         return new_summary
-    
-    
-    
+
 class PDFSummaryGenerator(SummaryGenerator):
     def get_loader(self, path: str):
         return PyPDFLoader(path)
-    
+
 class YoutubeSummaryGenerator(SummaryGenerator):
     def get_loader(self, path: str):
         return YoutubeLoader(path)
+

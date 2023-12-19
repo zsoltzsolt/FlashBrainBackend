@@ -16,7 +16,7 @@ def getIdFromUrl(url):
     return url.split("/")[-1]
 
 @router.post("/")
-def getVideo(
+async def getVideo(
     youtube: YouTubeBase,
     request: SummarySourceBase = Depends(),
     db: Session = Depends(get_db)
@@ -28,4 +28,5 @@ def getVideo(
                           categoryId=1, 
                           isPublic=request.isPublic, 
                           path=youtube.url)
-    return YoutubeSummaryGenerator().generate_summary(summary, db)
+    result = await YoutubeSummaryGenerator().generate_summary(summary, db)
+    return result
