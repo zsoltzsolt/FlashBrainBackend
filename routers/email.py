@@ -15,7 +15,7 @@ router = APIRouter(
 @router.get("/")
 async def email(token: str, db:Session = Depends(get_db)):
     user = get_current_user(token, db)
-    user.email_verified = True
+    user.emailVerified = True
     db.commit()
     db.refresh(user)
     return RedirectResponse("http://localhost:3000/", status_code=302)
