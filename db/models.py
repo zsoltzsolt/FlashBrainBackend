@@ -10,6 +10,7 @@ class DbUser(Base):
      password = Column(String)
      emailVerified = Column(Boolean, default=False)
      summaries = relationship("DbSummary", back_populates="owner", lazy="joined")
+     likes = relationship('DbLike', back_populates='user')
      
 class DbCategory(Base):
     __tablename__ = "category"
@@ -37,4 +38,12 @@ class DbFlashCard(Base):
     imagePath = Column(String)
     summaryId = Column(Integer, ForeignKey('summary.summaryId'))
     summary = relationship('DbSummary', back_populates='flashcards')
+    like = relationship('DbLike', back_populates="like.likeId")
      
+class DbLike(Base):
+    __tablename__ = "like"
+    likeId = Column(Integer, primary_key=True, autoincrement=True)
+    flashcardId = Column(Integer, ForeignKey('flashcard.flashcardId'))
+    flashcard = relationship('DbFlashCard', back_populates='like')
+    userId = Column(Integer, ForeignKey('user.uid'))
+    user = relationship('DbUser', back_populates='likes')
