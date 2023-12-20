@@ -28,6 +28,7 @@ class DbSummary(Base):
     owner = relationship("DbUser", back_populates="summaries")  
     category = relationship("DbCategory", back_populates="summaries")
     flashcards = relationship('DbFlashCard', back_populates='summary')
+    like = relationship('DbLike', back_populates="summary")
 
     
 class DbFlashCard(Base):
@@ -38,12 +39,11 @@ class DbFlashCard(Base):
     imagePath = Column(String)
     summaryId = Column(Integer, ForeignKey('summary.summaryId'))
     summary = relationship('DbSummary', back_populates='flashcards')
-    like = relationship('DbLike', back_populates="like.likeId")
      
 class DbLike(Base):
     __tablename__ = "like"
     likeId = Column(Integer, primary_key=True, autoincrement=True)
-    flashcardId = Column(Integer, ForeignKey('flashcard.flashcardId'))
-    flashcard = relationship('DbFlashCard', back_populates='like')
+    summaryId = Column(Integer, ForeignKey('summary.summaryId'))
+    summary = relationship('DbSummary', back_populates='like')
     userId = Column(Integer, ForeignKey('user.uid'))
     user = relationship('DbUser', back_populates='likes')
