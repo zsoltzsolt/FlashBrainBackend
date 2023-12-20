@@ -1,6 +1,12 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+
+class LikeDisplay(BaseModel):
+    likeId: Optional[int]
+    summaryId: Optional[int]
+    userId: Optional[int]
+
 class FlashCardDisplay(BaseModel):
     title: str
     content: str
@@ -15,6 +21,7 @@ class SummaryDisplay(BaseModel):
     ownerId: int
     categoryId: int
     flashcards: List[FlashCardDisplay] = []
+    like: List[LikeDisplay] = []
     isPublic: bool
     class Config():
         from_attributes = True
@@ -25,6 +32,7 @@ class UserDisplay(BaseModel):
     email: str 
     emailVerified: bool
     summaries: List[SummaryDisplay] = []
+    likes: List[LikeDisplay] = []
     class Config():
         from_attributes = True
         
@@ -53,6 +61,7 @@ class FlashCardBase(BaseModel):
     content: str
     imagePath: str
     summaryId: int
+    like: Optional[LikeDisplay] = None
     class Config():
         from_attributes = True
 
