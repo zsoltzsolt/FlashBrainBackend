@@ -8,8 +8,8 @@ from llm.summaryGeneration import PDFSummaryGenerator
 import asyncio
 
 router = APIRouter(
-    prefix="/file",
-    tags=["File"]
+    prefix="/summary/file",
+    tags=["Summary"]
 )
 
 async def process_file(summary, upload_file, db):

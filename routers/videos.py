@@ -8,8 +8,8 @@ from llm.summaryGeneration import YoutubeSummaryGenerator
 
 
 router = APIRouter(
-    prefix="/video",
-    tags=["Video"]
+    prefix="/summary/video",
+    tags=["Summary"]
 )
 
 def getIdFromUrl(url):
