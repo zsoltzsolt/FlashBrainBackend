@@ -68,3 +68,7 @@ class FlashCardBase(BaseModel):
 
 class YouTubeBase(BaseModel):
     url: str
+    
+class Filter(BaseModel):
+    categories: List[int]
+    query: str
