@@ -29,7 +29,7 @@ def generate_token(request: UserLogin, db: Session = Depends(get_db)):
     access_token = create_access_token(data={'sub': user.username}, expires_delta=timedelta(minutes=60))
 
     return {
-        'access_token': access_token
+        'accessToken': access_token
     }
     
 @router.get("/token/status", response_model=UserDisplay)

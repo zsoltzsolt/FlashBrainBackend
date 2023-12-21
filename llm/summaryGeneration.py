@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 from db.models import DbSummary
 from sqlalchemy.orm import Session
 from db.database import get_db
-from routers.schemas import SummarySourceBase, SummaryBase, FlashCardBase
+from routers.schemas import SummarySourceBase, SummaryBase, FlashCardBase, UserDisplay
 from db.flashcard import create_flash_card
 import json
 from fastapi import Depends

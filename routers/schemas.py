@@ -46,7 +46,6 @@ class UserLogin(BaseModel):
     password: str
     
 class SummarySourceBase(BaseModel):
-    ownerId: int
     isPublic: bool
     
 class SummaryBase(BaseModel):
