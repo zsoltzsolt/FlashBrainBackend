@@ -46,7 +46,6 @@ class UserLogin(BaseModel):
     password: str
     
 class SummarySourceBase(BaseModel):
-    ownerId: int
     isPublic: bool
     
 class SummaryBase(BaseModel):
@@ -68,3 +67,7 @@ class FlashCardBase(BaseModel):
 
 class YouTubeBase(BaseModel):
     url: str
+    
+class Filter(BaseModel):
+    categories: List[int]
+    query: str

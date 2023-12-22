@@ -10,11 +10,14 @@ from abc import ABC, abstractmethod
 from db.models import DbSummary
 from sqlalchemy.orm import Session
 from db.database import get_db
-from routers.schemas import SummarySourceBase, SummaryBase, FlashCardBase
+from routers.schemas import SummarySourceBase, SummaryBase, FlashCardBase, UserDisplay
 from db.flashcard import create_flash_card
 import json
 from fastapi import Depends
 import os
+from time import sleep
+from email1.emailSender import send_email
+from email1.summaryReady import create_subject_body
 
 class SummaryGenerator(ABC):
 
@@ -22,7 +25,7 @@ class SummaryGenerator(ABC):
     def get_loader(self, path: str):
         pass
 
-    async def generate_metadata(self, path: str):
+    def generate_metadata(self, path: str):
         loader = self.get_loader(path)
         docs = loader.load()
 
@@ -40,7 +43,7 @@ class SummaryGenerator(ABC):
         return stuff_chain.run(docs)
 
 
-    async def generate_summaries(self, path: str):
+    def generate_summaries(self, path: str):
         loader = self.get_loader(path)
         docs = loader.load()
         prompt_template = """Summarize the following text in exactly 5, 2-3 sentence ideas formatted as a json. The number of ideas HAS to be 5,10 or 15. The json should be a list containing the generated ideas, and each idea has a 'title' and 'content' keys. This is the text:
@@ -59,13 +62,13 @@ class SummaryGenerator(ABC):
        
 
 
-    async def generate_summary(self, request: SummarySourceBase, db: Session = Depends(get_db)):
+    def generate_summary(self, request: SummarySourceBase, db: Session = Depends(get_db)):
 
-        title_category = await self.generate_metadata(request.path)
+        title_category = self.generate_metadata(request.path)
         print(title_category)
         newJsonMeta = json.loads(title_category)
 
-        message = await self.generate_summaries(request.path)
+        message = self.generate_summaries(request.path)
         newJson = json.loads(message)
         print(newJson)
 
@@ -87,14 +90,20 @@ class SummaryGenerator(ABC):
                 summaryId=new_summary.summaryId
             )
             create_flash_card(new_flash, db)
+            
+        
+        if os.path.exists(request.path):
+            os.remove(request.path)
 
-        return new_summary
+        return new_summary.summaryId
 
 class PDFSummaryGenerator(SummaryGenerator):
     def get_loader(self, path: str):
-        return PyPDFLoader(path)
+        loader = PyPDFLoader(path)
+        return loader
 
 class YoutubeSummaryGenerator(SummaryGenerator):
     def get_loader(self, path: str):
-        return YoutubeLoader(path)
+        loader = YoutubeLoader(path)
+        return loader
 
