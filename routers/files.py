@@ -10,20 +10,14 @@ from auth.oauth2 import get_current_active_user
 from email1.emailSender import send_email
 from email1.summaryReady import create_subject_body
 from time import sleep
+from fastapi import BackgroundTasks
 
 router = APIRouter(
     prefix="/summary/file",
     tags=["Summary"]
 )
 
-
-@router.post("/")
-def getFile(
-    request: SummarySourceBase = Depends(),
-    upload_file: UploadFile = File(...),
-    db: Session = Depends(get_db),
-    user: UserDisplay = Depends(get_current_active_user)
-):
+def create_summary(request: SummarySourceBase,upload_file: UploadFile,db: Session,user: UserDisplay):
     path = f"files/{upload_file.filename}"
     summary = SummaryBase(title="", 
                           ownerId=user.uid, 
@@ -38,9 +32,19 @@ def getFile(
     
     sleep(300)
     
-    subject, body = create_subject_body(user.username, f"localhost:3000/summaries/{id1}")
+    subject, body = create_subject_body(user.username, f"localhost:3000/summaries/{id1}\n")
     
     send_email(user.email, subject, body)
-    
-    return {"response": "Summary generated succesfully!"}
+
+
+@router.post("/")
+def getFile(
+    background_tasks: BackgroundTasks,
+    request: SummarySourceBase = Depends(),
+    upload_file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    user: UserDisplay = Depends(get_current_active_user)
+):
+    background_tasks.add_task(create_summary, upload_file, request, db, user)
+    return {"message": "Merry Christmas Radu"}
 

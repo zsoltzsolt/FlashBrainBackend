@@ -31,7 +31,7 @@ def create_summary( youtube: YouTubeBase,request: SummarySourceBase,db: Session,
     
     sleep(100)
     
-    subject, body = create_subject_body(user.username, f"localhost:3000/summaries/{id1}")
+    subject, body = create_subject_body(user.username, f"localhost:3000/summaries/{id1}\n")
     
     send_email(user.email, subject, body)
     
