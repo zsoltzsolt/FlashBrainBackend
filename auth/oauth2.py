@@ -15,6 +15,7 @@ SECRET_KEY = 'db5595cb359246dbb9858d451a4132b32f1a263a7fb06f12f89eb2a3f94bfe30'
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 1
 
+
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -50,7 +51,8 @@ def get_current_user(token: str = Depends(oauth2_schema), db: Session = Depends(
 def get_current_active_user(token: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
     current_user = get_current_user(token, db)
     if current_user.emailVerified == False:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email is not verified!")    
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email is not verified!")
+    
     return current_user
 
 

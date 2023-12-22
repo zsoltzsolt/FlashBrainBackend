@@ -10,6 +10,8 @@ class DbUser(Base):
      email = Column(String, unique=True)
      password = Column(String)
      emailVerified = Column(Boolean, default=False)
+     current_streak = Column(Integer, default=1)
+     max_streak = Column(Integer, default=1)
      summaries = relationship("DbSummary", back_populates="owner", lazy="joined")
      likes = relationship('DbLike', back_populates='user')
      login_history = relationship('DbLoginHistory', back_populates='user')

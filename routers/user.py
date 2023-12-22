@@ -4,13 +4,14 @@ from db.database import get_db
 from sqlalchemy.orm.session import Session
 from fastapi import Depends
 from routers.schemas import UserBase
-from db.user import create_user_func
+from db.user import create_user_func, update_streak
 from db.database import SessionLocal
 import sqlalchemy
 from fastapi import HTTPException
 from fastapi import status
 from datetime import timedelta
 from auth.oauth2 import create_access_token
+from auth.oauth2 import get_current_active_user
 
 
 router = APIRouter(
@@ -29,3 +30,7 @@ def create_user(request: UserBase, db: Session = Depends(get_db)):
     return {
         'access_token': access_token
     }
+    
+@router.get("/streak")
+def get_daily_streak(user: UserDisplay = Depends(get_current_active_user)):
+    return update_streak(user)
