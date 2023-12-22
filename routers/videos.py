@@ -6,6 +6,9 @@ from fastapi import Depends
 from fastapi import Body
 from llm.summaryGeneration import YoutubeSummaryGenerator
 from auth.oauth2 import get_current_active_user
+from email1.emailSender import send_email
+from email1.summaryReady import create_subject_body
+from time import sleep
 
 router = APIRouter(
     prefix="/summary/video",
@@ -29,5 +32,12 @@ async def getVideo(
                           categoryId=1, 
                           isPublic=request.isPublic, 
                           path=youtube.url)
-    result = await YoutubeSummaryGenerator().generate_summary(summary, db)
+    result = YoutubeSummaryGenerator().generate_summary(summary, db, user)
+    
+    sleep(300)
+    
+    subject, body = create_subject_body(user.username, f"localhost:3000/summaries/")
+    
+    send_email(user.email, subject, body)
+    
     return result

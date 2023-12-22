@@ -7,18 +7,18 @@ import shutil
 from llm.summaryGeneration import PDFSummaryGenerator
 import asyncio
 from auth.oauth2 import get_current_active_user
+from email1.emailSender import send_email
+from email1.summaryReady import create_subject_body
+from time import sleep
 
 router = APIRouter(
     prefix="/summary/file",
     tags=["Summary"]
 )
 
-async def process_file(summary, upload_file, db):
-    result = await PDFSummaryGenerator().generate_summary(summary, db)
-    return {"ok": "ok"}
 
 @router.post("/")
-async def getFile(
+def getFile(
     request: SummarySourceBase = Depends(),
     upload_file: UploadFile = File(...),
     db: Session = Depends(get_db),
@@ -32,10 +32,15 @@ async def getFile(
                           path=path)
     with open(path, "wb") as output_file:
         shutil.copyfileobj(upload_file.file, output_file)
-    try:
-        # Utilizăm asyncio.wait_for pentru a gestiona timeout-ul de 20 de secunde
-        result = await asyncio.wait_for(process_file(summary, upload_file, db), timeout=20)
-        return result
-    except asyncio.TimeoutError:
-        # Răspunsul pentru timeout
-        return JSONResponse(content={"error": "Timeout reached"}, status_code=200)
+
+    
+    result =PDFSummaryGenerator().generate_summary(summary, db, user)
+    
+    sleep(300)
+    
+    subject, body = create_subject_body(user.username, f"localhost:3000/summaries/")
+    
+    send_email(user.email, subject, body)
+    
+    return result
+
