@@ -11,7 +11,7 @@ from auth.oauth2 import create_access_token
 from datetime import timedelta
 from auth.oauth2 import get_current_user
 from auth.oauth2 import get_current_active_user
-
+from db.models import DbLoginHistory
 
 router = APIRouter(
     prefix="/auth",
@@ -27,6 +27,10 @@ def generate_token(request: UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Password is not correct!")
 
     access_token = create_access_token(data={'sub': user.username}, expires_delta=timedelta(minutes=60))
+    
+    login_entry = DbLoginHistory(user=user)
+    db.add(login_entry)
+    db.commit()
 
     return {
         'accessToken': access_token

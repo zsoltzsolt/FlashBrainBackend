@@ -6,6 +6,7 @@ from sqlalchemy.orm.session import Session
 from db.database import get_db
 from db import user
 from jose import JWTError, jwt
+from db.models import DbLoginHistory
 
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl='auth')
@@ -22,6 +23,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    
     return encoded_jwt
 
 def get_current_user(token: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
@@ -48,7 +50,7 @@ def get_current_user(token: str = Depends(oauth2_schema), db: Session = Depends(
 def get_current_active_user(token: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
     current_user = get_current_user(token, db)
     if current_user.emailVerified == False:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email is not verified!")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email is not verified!")    
     return current_user
 
 
