@@ -34,13 +34,13 @@ def getFile(
         shutil.copyfileobj(upload_file.file, output_file)
 
     
-    result =PDFSummaryGenerator().generate_summary(summary, db, user)
+    id1 =PDFSummaryGenerator().generate_summary(summary, db)
     
     sleep(300)
     
-    subject, body = create_subject_body(user.username, f"localhost:3000/summaries/")
+    subject, body = create_subject_body(user.username, f"localhost:3000/summaries/{id1}")
     
     send_email(user.email, subject, body)
     
-    return result
+    return {"response": "Summary generated succesfully!"}
 

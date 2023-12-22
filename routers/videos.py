@@ -19,7 +19,7 @@ def getIdFromUrl(url):
     return url.split("/")[-1]
 
 @router.post("/")
-async def getVideo(
+def getVideo(
     youtube: YouTubeBase,
     request: SummarySourceBase = Depends(),
     db: Session = Depends(get_db),
@@ -32,12 +32,12 @@ async def getVideo(
                           categoryId=1, 
                           isPublic=request.isPublic, 
                           path=youtube.url)
-    result = YoutubeSummaryGenerator().generate_summary(summary, db, user)
+    id1 = YoutubeSummaryGenerator().generate_summary(summary, db)
     
     sleep(300)
     
-    subject, body = create_subject_body(user.username, f"localhost:3000/summaries/")
+    subject, body = create_subject_body(user.username, f"localhost:3000/summaries/{id1}")
     
     send_email(user.email, subject, body)
     
-    return result
+    return {"response": "Summary generated succesfully!"}

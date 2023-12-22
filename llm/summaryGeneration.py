@@ -62,7 +62,7 @@ class SummaryGenerator(ABC):
        
 
 
-    def generate_summary(self, request: SummarySourceBase, db: Session = Depends(get_db), user: UserDisplay = Depends()):
+    def generate_summary(self, request: SummarySourceBase, db: Session = Depends(get_db)):
 
         title_category = self.generate_metadata(request.path)
         print(title_category)
@@ -95,7 +95,7 @@ class SummaryGenerator(ABC):
         if os.path.exists(request.path):
             os.remove(request.path)
 
-        return new_summary
+        return new_summary.summaryId
 
 class PDFSummaryGenerator(SummaryGenerator):
     def get_loader(self, path: str):
@@ -104,5 +104,6 @@ class PDFSummaryGenerator(SummaryGenerator):
 
 class YoutubeSummaryGenerator(SummaryGenerator):
     def get_loader(self, path: str):
-        return YoutubeLoader(path)
+        loader = YoutubeLoader(path)
+        return loader
 
