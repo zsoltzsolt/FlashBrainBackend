@@ -36,7 +36,7 @@ def create_summary( youtube: YouTubeBase,request: SummarySourceBase,db: Session,
     send_email(user.email, subject, body)
     
 
-@router.post("/")
+@router.post("")
 async def getVideo(
     background_tasks: BackgroundTasks,
     youtube: YouTubeBase,

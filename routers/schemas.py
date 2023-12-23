@@ -6,8 +6,11 @@ class LikeDisplay(BaseModel):
     likeId: Optional[int]
     summaryId: Optional[int]
     userId: Optional[int]
+    class Config():
+        from_attributes = True
 
 class FlashCardDisplay(BaseModel):
+    flashcardId: int 
     title: str
     content: str
     imagePath: str
@@ -32,7 +35,6 @@ class UserDisplay(BaseModel):
     email: str 
     emailVerified: bool
     summaries: List[SummaryDisplay] = []
-    likes: List[LikeDisplay] = []
     class Config():
         from_attributes = True
         

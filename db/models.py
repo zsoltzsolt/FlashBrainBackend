@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from db.database import Base
+from datetime import datetime
 
 class DbUser(Base):
      __tablename__ = "user"
@@ -9,8 +10,18 @@ class DbUser(Base):
      email = Column(String, unique=True)
      password = Column(String)
      emailVerified = Column(Boolean, default=False)
+     current_streak = Column(Integer, default=1)
+     max_streak = Column(Integer, default=1)
      summaries = relationship("DbSummary", back_populates="owner", lazy="joined")
      likes = relationship('DbLike', back_populates='user')
+     login_history = relationship('DbLoginHistory', back_populates='user')
+
+class DbLoginHistory(Base):
+    __tablename__ = "login_history"
+    loginId = Column(Integer, primary_key=True, index=True)
+    userId = Column(Integer, ForeignKey('user.uid'))
+    user = relationship('DbUser', back_populates='login_history')
+    loginDate = Column(DateTime, default=datetime.utcnow)
      
 class DbCategory(Base):
     __tablename__ = "category"

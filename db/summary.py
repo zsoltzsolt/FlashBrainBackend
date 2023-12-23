@@ -3,9 +3,14 @@ from db.models import DbSummary
 from routers.schemas import UserDisplay, Filter
 from db.models import DbSummary
 from sqlalchemy import and_
+from routers.schemas import SummaryDisplay
 
 def get_all(db: Session):
     return db.query(DbSummary).all()
+
+def get_summary(summaryId: int, db:Session) -> SummaryDisplay:
+    summary = db.query(DbSummary).get(summaryId)
+    return summary
 
 def delete_summary(summaryId: int, db: Session, user: UserDisplay):
     like = db.query(DbSummary).filter(

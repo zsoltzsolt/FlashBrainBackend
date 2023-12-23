@@ -4,13 +4,15 @@ from db.database import get_db
 from sqlalchemy.orm.session import Session
 from fastapi import Depends
 from routers.schemas import UserBase
-from db.user import create_user_func
-from db.database import SessionLocal
+from db.user import create_user_func, update_streak
 import sqlalchemy
 from fastapi import HTTPException
 from fastapi import status
-from datetime import timedelta
-from auth.oauth2 import create_access_token
+from auth.oauth2 import get_current_active_user
+from db.user import get_user_by_id
+from typing import Union, Optional
+from pydantic import BaseModel
+from fastapi.openapi.models import HTTPBase
 
 
 router = APIRouter(
@@ -29,3 +31,16 @@ def create_user(request: UserBase, db: Session = Depends(get_db)):
     return {
         'access_token': access_token
     }
+    
+@router.get("/streak")
+def get_daily_streak(user: UserDisplay = Depends(get_current_active_user)):
+    return update_streak(user)
+
+@router.get("/{uid}", response_model=UserDisplay)
+def get_user_by_id1(uid: int, db: Session = Depends(get_db)):
+    user = get_user_by_id(uid, db)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {uid} not found!")
+    else:
+        return user
+        

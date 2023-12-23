@@ -1,7 +1,8 @@
 from sqlalchemy.orm.session import Session
 from routers.schemas import UserDisplay
-from db.models import DbLike
+from db.models import DbLike, DbSummary
 from sqlalchemy import and_
+from sqlalchemy.orm import joinedload
 
 def add_like(summaryId: int, db: Session, user: UserDisplay):
     new_like = DbLike(
@@ -24,7 +25,15 @@ def delete_like(summaryId: int, db: Session, user: UserDisplay):
         db.commit()
         return "ok"
     return None
-    
+ 
+def get_liked_summaries(db: Session, user: UserDisplay):
+ 
+    liked_summaries = db.query(DbSummary).\
+    join(DbLike, DbLike.summaryId == DbSummary.summaryId).\
+    filter(DbLike.userId == user.uid).\
+    options(joinedload(DbSummary.owner)).all()
+
+    return liked_summaries  
     
 
     
