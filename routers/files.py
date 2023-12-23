@@ -37,7 +37,7 @@ def create_summary(request: SummarySourceBase,upload_file: UploadFile,db: Sessio
     send_email(user.email, subject, body)
 
 
-@router.post("/")
+@router.post("")
 def getFile(
     background_tasks: BackgroundTasks,
     request: SummarySourceBase = Depends(),
