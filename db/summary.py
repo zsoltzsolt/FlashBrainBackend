@@ -7,6 +7,9 @@ from sqlalchemy import and_
 def get_all(db: Session):
     return db.query(DbSummary).all()
 
+def get_summary(summaryId: int, db:Session):
+    return db.query(DbSummary).get(summaryId)
+
 def delete_summary(summaryId: int, db: Session, user: UserDisplay):
     like = db.query(DbSummary).filter(
         and_(

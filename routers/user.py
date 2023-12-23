@@ -5,16 +5,11 @@ from sqlalchemy.orm.session import Session
 from fastapi import Depends
 from routers.schemas import UserBase
 from db.user import create_user_func, update_streak
-from db.like import get_liked_summaries
-from db.database import SessionLocal
 import sqlalchemy
 from fastapi import HTTPException
 from fastapi import status
-from datetime import timedelta
-from auth.oauth2 import create_access_token
 from auth.oauth2 import get_current_active_user
-from typing import List
-from routers.schemas import SummaryDisplay
+
 
 
 router = APIRouter(
@@ -37,7 +32,3 @@ def create_user(request: UserBase, db: Session = Depends(get_db)):
 @router.get("/streak")
 def get_daily_streak(user: UserDisplay = Depends(get_current_active_user)):
     return update_streak(user)
-
-@router.get("/favourites", response_model=List[SummaryDisplay])
-def get_liked_summaries1(db: Session = Depends(get_db), user: UserDisplay = Depends(get_current_active_user)):
-    return get_liked_summaries(db, user)
