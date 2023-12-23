@@ -20,6 +20,10 @@ router = APIRouter(
 def get_all_summaries(db: Session = Depends(get_db)):
     return get_all(db)
 
+@router.get("/favourites", response_model=List[SummaryDisplay])
+def get_liked_summaries1(db: Session = Depends(get_db), user: UserDisplay = Depends(get_current_active_user)):
+    return get_liked_summaries(db, user)
+
 @router.get("/{summaryId}", response_model=SummaryDisplay)
 def get_all_summaries(summaryId:int, db: Session = Depends(get_db)):
     summary = get_summary(summaryId, db)
@@ -39,6 +43,3 @@ def delete_summary1(summaryId: int, db: Session = Depends(get_db), user: UserDis
 def get_all_filtered(filter1: Filter, db: Session = Depends(get_db)):
     return filter_summary(filter1, db)
 
-@router.get("/favourites", response_model=List[SummaryDisplay])
-def get_liked_summaries1(db: Session = Depends(get_db), user: UserDisplay = Depends(get_current_active_user)):
-    return get_liked_summaries(db, user)
