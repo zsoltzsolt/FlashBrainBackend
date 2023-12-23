@@ -32,7 +32,6 @@ class UserDisplay(BaseModel):
     email: str 
     emailVerified: bool
     summaries: List[SummaryDisplay] = []
-    likes: List[LikeDisplay] = []
     class Config():
         from_attributes = True
         
