@@ -45,6 +45,6 @@ def getFile(
     db: Session = Depends(get_db),
     user: UserDisplay = Depends(get_current_active_user)
 ):
-    background_tasks.add_task(create_summary, upload_file, request, db, user)
+    background_tasks.add_task(create_summary, request, upload_file, db, user)
     return {"message": "Merry Christmas Radu"}
 
