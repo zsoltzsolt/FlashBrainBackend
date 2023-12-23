@@ -30,6 +30,9 @@ def create_user_func(db: Session, request: UserBase):
 def get_user_by_username(db: Session, username: str):
      user = db.query(DbUser).filter(DbUser.username == username).first()
      return user
+ 
+def get_user_by_id(id: int, db: Session):
+     return db.query(DbUser).get(id)
 
 
 def update_streak(user):

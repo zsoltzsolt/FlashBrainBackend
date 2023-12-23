@@ -9,6 +9,7 @@ import sqlalchemy
 from fastapi import HTTPException
 from fastapi import status
 from auth.oauth2 import get_current_active_user
+from db.user import get_user_by_id
 
 
 
@@ -32,3 +33,12 @@ def create_user(request: UserBase, db: Session = Depends(get_db)):
 @router.get("/streak")
 def get_daily_streak(user: UserDisplay = Depends(get_current_active_user)):
     return update_streak(user)
+
+@router.get("/{uid}", response_model=UserDisplay)
+def get_user_by_id1(uid: int, db: Session = Depends(get_db)):
+    user = get_user_by_id(uid, db)
+    if user is None:
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"User with id {uid} not found!")
+    else:
+        return user
+        

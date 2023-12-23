@@ -8,6 +8,7 @@ class LikeDisplay(BaseModel):
     userId: Optional[int]
 
 class FlashCardDisplay(BaseModel):
+    flashcardId: int 
     title: str
     content: str
     imagePath: str
