@@ -31,7 +31,7 @@ def get_user_by_username(db: Session, username: str):
      user = db.query(DbUser).filter(DbUser.username == username).first()
      return user
  
-def get_user_by_id(id: int, db: Session):
+def get_user_by_id(id: int, db: Session) -> UserDisplay:
      return db.query(DbUser).get(id)
 
 

@@ -10,7 +10,9 @@ from fastapi import HTTPException
 from fastapi import status
 from auth.oauth2 import get_current_active_user
 from db.user import get_user_by_id
-
+from typing import Union, Optional
+from pydantic import BaseModel
+from fastapi.openapi.models import HTTPBase
 
 
 router = APIRouter(
@@ -38,7 +40,7 @@ def get_daily_streak(user: UserDisplay = Depends(get_current_active_user)):
 def get_user_by_id1(uid: int, db: Session = Depends(get_db)):
     user = get_user_by_id(uid, db)
     if user is None:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"User with id {uid} not found!")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {uid} not found!")
     else:
         return user
         

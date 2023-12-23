@@ -25,10 +25,11 @@ def get_liked_summaries1(db: Session = Depends(get_db), user: UserDisplay = Depe
     return get_liked_summaries(db, user)
 
 @router.get("/{summaryId}", response_model=SummaryDisplay)
-def get_all_summaries(summaryId:int, db: Session = Depends(get_db)):
+def get_all_summaries(summaryId: int, db: Session = Depends(get_db)):
     summary = get_summary(summaryId, db)
+    
     if summary is None:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"Summary with id {summaryId} not found!")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Summary with id {summaryId} not found!")
     else:
         return summary
 

@@ -86,7 +86,7 @@ class SummaryGenerator(ABC):
             new_flash = FlashCardBase(
                 title=json_item['title'],
                 content=json_item['content'],
-                imagePath="https://www.google.com/url?sa=i&url=https%3A%2F%2Fstock.adobe.com%2Fsearch%3Fk%3Dexample&psig=AOvVaw0PcUbcIpaFBbAF-M_4Qgnq&ust=1702793939676000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCJDQ8fKnk4MDFQAAAAAdAAAAABAJ",
+                imagePath="https://www.shutterstock.com/image-photo/example-word-written-on-wooden-260nw-1765482248.jpg",
                 summaryId=new_summary.summaryId
             )
             create_flash_card(new_flash, db)

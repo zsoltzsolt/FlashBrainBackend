@@ -6,6 +6,8 @@ class LikeDisplay(BaseModel):
     likeId: Optional[int]
     summaryId: Optional[int]
     userId: Optional[int]
+    class Config():
+        from_attributes = True
 
 class FlashCardDisplay(BaseModel):
     flashcardId: int 
