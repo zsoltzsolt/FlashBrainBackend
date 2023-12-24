@@ -34,6 +34,8 @@ class UserDisplay(BaseModel):
     username: str
     email: str 
     emailVerified: bool
+    current_streak: int
+    max_streak: int
     summaries: List[SummaryDisplay] = []
     class Config():
         from_attributes = True
