@@ -36,7 +36,6 @@ def get_user_by_id(id: int, db: Session) -> UserDisplay:
 
 
 def update_streak(user):
-    # Access the login_history attribute directly
     login_history = user.login_history
 
     if not login_history:
@@ -46,20 +45,24 @@ def update_streak(user):
     else:
         # Order login history by login date in descending order
         login_history_ordered = sorted(login_history, key=lambda x: x.loginDate, reverse=True)
-
+        
         today = datetime.utcnow().date()
-        last_login_date = login_history_ordered[0].loginDate.date()
+        new_streak = 1
 
-        if (today - last_login_date).days == 1:
-            # Increment current streak
-            user.current_streak += 1
-            user.max_streak = max(user.current_streak, user.max_streak)
-        elif (today - last_login_date).days > 1:
-            # Reset streaks
-            user.current_streak = 1
-            user.max_streak = max(user.current_streak, user.max_streak)
+        # Iterăm prin istoricul de logări și numărăm zilele consecutive începând de la ziua curentă
+        for login in login_history_ordered:
+            login_date = login.loginDate.date()
 
-    return {
-        "current_streak": user.current_streak,
-        "max_streak": user.max_streak,
-    }
+
+            if (today - login_date).days == 1:
+                # Dacă este ziua precedentă, continuăm șirul curent
+                new_streak += user.current_streak
+                break
+            
+
+        # Actualizăm streak-urile
+        user.current_streak = new_streak
+        user.max_streak = max(new_streak, user.max_streak)
+        
+        return user
+

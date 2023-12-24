@@ -32,9 +32,6 @@ def create_user(request: UserBase, db: Session = Depends(get_db)):
         'access_token': access_token
     }
     
-@router.get("/streak")
-def get_daily_streak(user: UserDisplay = Depends(get_current_active_user)):
-    return update_streak(user)
 
 @router.get("/{uid}", response_model=UserDisplay)
 def get_user_by_id1(uid: int, db: Session = Depends(get_db)):
