@@ -19,7 +19,8 @@ def send_email(receiver_email, subject, message_body):
     msg["To"] = receiver_email
     msg["Subject"] = subject
 
-    msg.attach(MIMEText(message_body, "plain"))
+    # Attach the HTML-formatted message
+    msg.attach(MIMEText(message_body, "html"))
 
     server.sendmail(sender_email, receiver_email, msg.as_string())
 
