@@ -94,7 +94,7 @@ def create_subject_body(name, link):
             <p class="button"><a href="{link}">Confirm Email</a></p>
             <p class="disclaimer">If you didn't sign up for our service, please disregard this email.</p>
             <p><b>Thank you,</b></p>
-            <p class="signature"><b>#FlashBrain</b></p>
+            <p class="signature"><b>#FlashBrain 🚀</b></p>
         </div>
     </body>
     </html>
