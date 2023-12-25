@@ -19,6 +19,12 @@ def create_user_func(db: Session, request: UserBase):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+    
+    login_entry = DbLoginHistory(user=new_user)
+    db.add(login_entry)
+    db.commit()
+    db.refresh(new_user)
+    
     access_token = create_access_token(data={"sub": new_user.username})
     access_token = create_access_token(data={"sub": new_user.username})
     link = os.environ.get("HOST_URL") + "email?token=" + access_token
