@@ -32,7 +32,7 @@ def create_summary(request: SummarySourceBase,upload_file: UploadFile,db: Sessio
     
     sleep(300)
     
-    subject, body = create_subject_body(user.username, f"localhost:3000/summaries/{id1}\n")
+    subject, body = create_subject_body(user.username, f"localhost:3000/viewflashcard/{id1}")
     
     send_email(user.email, subject, body)
 

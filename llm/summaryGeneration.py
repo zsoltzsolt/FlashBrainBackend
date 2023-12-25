@@ -56,7 +56,7 @@ class SummaryGenerator(ABC):
         stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
 
         docs = loader.load()
-        v = stuff_chain.run(docs)  # Modificarea aici
+        v = stuff_chain.run(docs)  
         print(v)
         return v
        
