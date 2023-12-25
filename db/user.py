@@ -1,6 +1,6 @@
 from sqlalchemy.orm.session import Session
 from routers.schemas import UserBase, UserDisplay
-from db.models import DbUser, DbLoginHistory
+from db.models import DbUser, DbLoginHistory, DbSummary, DbLike, DbSummaryViewHistory
 from db.database import SessionLocal
 from db.hashing import Hash
 from email1.emailConfirmationData import create_subject_body
@@ -9,6 +9,8 @@ from auth.oauth2 import create_access_token
 import os
 from datetime import datetime, timedelta
 from sqlalchemy import desc
+from fastapi.exceptions import HTTPException
+from sqlalchemy import func
 
 def create_user_func(db: Session, request: UserBase):
     new_user = DbUser(
@@ -71,4 +73,27 @@ def update_streak(user):
         user.max_streak = max(new_streak, user.max_streak)
         
         return user
+    
+def calculate_score(user_id: int, db: Session):
+    
+    try:
+        # Query the database to get the user, their summaries, likes, and views
+        user = db.query(DbUser).get(user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        summaries = db.query(DbSummary).filter(DbSummary.owner == user).all()
+
+        # Calculate the score based on the number of likes and views for each summary
+        total_score = 0
+        for summary in summaries:
+            likes_count = db.query(func.count(DbLike.likeId)).filter(DbLike.summary == summary).scalar()
+            views_count = db.query(func.count(DbSummaryViewHistory.viewId)).filter(DbSummaryViewHistory.summary == summary).scalar()
+            summary_score = likes_count * 10 + 10 * views_count
+            total_score += summary_score
+
+        return total_score
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
