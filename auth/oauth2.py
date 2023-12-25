@@ -27,6 +27,23 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     
     return encoded_jwt
 
+def get_user_if_available(token: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            return None
+    except JWTError:
+        return None
+
+    try:
+        user_instance = user.get_user_by_username(db, username)
+        return user_instance
+    except HTTPException as e:
+        print(f"Exception in get_user_if_available: {e}")
+        print(f"Status code: {e.status_code}")
+        return None
+
 def get_current_user(token: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
      credentials_exception = HTTPException(
          status_code=status.HTTP_401_UNAUTHORIZED,
