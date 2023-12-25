@@ -15,7 +15,8 @@ from typing import Union, Optional
 from pydantic import BaseModel
 from fastapi.openapi.models import HTTPBase
 from db.models import DbUser, DbSummary, DbLike, DbSummaryViewHistory
-
+from db.user import calculate_score
+from db.like import get_liked_summaries
 
 
 router = APIRouter(
@@ -65,7 +66,20 @@ def get_user_by_id1(uid: int, db: Session = Depends(get_db)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {uid} not found!")
     else:
-        return user
+        user.liked_summaries = get_liked_summaries(db, user)
+        user_updated = update_streak(user)
+        score = calculate_score(user_updated.uid, db)
+        response = UserDisplay(
+        uid=user_updated.uid,
+        username=user_updated.username,
+        email=user_updated.email,
+        emailVerified=user_updated.emailVerified,
+        current_streak=user_updated.current_streak,
+        max_streak=user_updated.max_streak,
+        score=score,
+        summaries=user_updated.summaries
+    )
+        return response
     
 
 
