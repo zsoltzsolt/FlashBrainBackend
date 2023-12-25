@@ -35,7 +35,7 @@ def create_user(request: UserBase, db: Session = Depends(get_db)):
         'access_token': access_token
     }
     
-@router.get('/users_sorted_by_score')
+@router.get('/leaderboard')
 def users_sorted_by_score(db: Session = Depends(get_db)):
     try:
         users = db.query(DbUser).all()
