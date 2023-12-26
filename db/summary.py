@@ -6,7 +6,7 @@ from sqlalchemy import and_
 from routers.schemas import SummaryDisplay
 
 def get_all(db: Session):
-    return db.query(DbSummary).all()
+    return db.query(DbSummary).filter(DbSummary.isPublic == True)
 
 def get_summary(summaryId: int, db:Session) -> SummaryDisplay:
     summary = db.query(DbSummary).get(summaryId)
