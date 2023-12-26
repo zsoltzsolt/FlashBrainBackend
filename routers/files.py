@@ -11,6 +11,7 @@ from email1.emailSender import send_email
 from email1.summaryReady import create_subject_body
 from time import sleep
 from fastapi import BackgroundTasks
+import os
 
 router = APIRouter(
     prefix="/summary/file",
@@ -30,9 +31,9 @@ def create_summary(request: SummarySourceBase,upload_file: UploadFile,db: Sessio
     
     id1 =PDFSummaryGenerator().generate_summary(summary, db)
     
-    sleep(300)
+    sleep(100)
     
-    subject, body = create_subject_body(user.username, f"localhost:3000/viewflashcard/{id1}")
+    subject, body = create_subject_body(user.username, f"{os.environ.get('FRONTEND_URL')}/viewflashcard/{id1}")
     
     send_email(user.email, subject, body)
 

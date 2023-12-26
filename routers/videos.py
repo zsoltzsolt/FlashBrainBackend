@@ -9,6 +9,7 @@ from email1.emailSender import send_email
 from email1.summaryReady import create_subject_body
 from time import sleep
 import re
+import os
 
 router = APIRouter(
     prefix="/summary/video",
@@ -55,7 +56,7 @@ def create_summary(youtube: YouTubeBase, request: SummarySourceBase, db: Session
 
     sleep(100)
 
-    subject, body = create_subject_body(user.username, f"http://localhost:3000/viewflashcard/{id1}")
+    subject, body = create_subject_body(user.username, f"{os.environ.get('FRONTEND_URL')}/viewflashcard/{id1}")
 
     send_email(user.email, subject, body)
 

@@ -6,6 +6,7 @@ from fastapi.params import Query
 from auth.oauth2 import get_current_user
 from routers.schemas import UserDisplay
 from fastapi.responses import RedirectResponse
+import os
 
 router = APIRouter( 
     prefix = "/email", 
@@ -18,4 +19,4 @@ async def email(token: str, db:Session = Depends(get_db)):
     user.emailVerified = True
     db.commit()
     db.refresh(user)
-    return RedirectResponse("http://localhost:3000/", status_code=302)
+    return RedirectResponse(os.environ.get('FRONTEND_URL'), status_code=302)
