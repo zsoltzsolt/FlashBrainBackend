@@ -12,10 +12,11 @@ class DbUser(Base):
      emailVerified = Column(Boolean, default=False)
      current_streak = Column(Integer, default=1)
      max_streak = Column(Integer, default=1)
-     summaries = relationship("DbSummary", back_populates="owner", lazy="joined")
-     likes = relationship('DbLike', back_populates='user')
-     login_history = relationship('DbLoginHistory', back_populates='user')
-
+     summaries = relationship("DbSummary", back_populates="owner", lazy="joined", cascade="all, delete")
+     likes = relationship('DbLike', back_populates='user', cascade="all, delete")
+     login_history = relationship('DbLoginHistory', back_populates='user', cascade="all, delete")
+     viewHistory = relationship('DbSummaryViewHistory', back_populates="user", cascade="all, delete")
+     
 class DbLoginHistory(Base):
     __tablename__ = "login_history"
     loginId = Column(Integer, primary_key=True, index=True)
@@ -38,8 +39,18 @@ class DbSummary(Base):
     ownerId = Column(Integer, ForeignKey("user.uid"))
     owner = relationship("DbUser", back_populates="summaries")  
     category = relationship("DbCategory", back_populates="summaries")
-    flashcards = relationship('DbFlashCard', back_populates='summary')
-    like = relationship('DbLike', back_populates="summary")
+    flashcards = relationship('DbFlashCard', back_populates='summary', cascade="all, delete")
+    like = relationship('DbLike', back_populates="summary", cascade="all, delete")
+    viewHistory = relationship('DbSummaryViewHistory', back_populates="summary", cascade="all, delete")
+    
+class DbSummaryViewHistory(Base):
+    __tablename__ = "summary_view_history"
+    viewId = Column(Integer, primary_key=True, index=True)
+    loginDate = Column(DateTime, default=datetime.utcnow)
+    userId = Column(Integer, ForeignKey('user.uid'))
+    summaryId = Column(Integer, ForeignKey('summary.summaryId'))
+    user = relationship('DbUser', back_populates='viewHistory')
+    summary = relationship('DbSummary', back_populates='viewHistory')
 
     
 class DbFlashCard(Base):

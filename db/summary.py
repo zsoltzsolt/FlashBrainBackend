@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session
-from db.models import DbSummary
+from db.models import DbSummary, DbSummaryViewHistory, DbUser
 from routers.schemas import UserDisplay, Filter
 from db.models import DbSummary
 from sqlalchemy import and_
 from routers.schemas import SummaryDisplay
 
 def get_all(db: Session):
-    return db.query(DbSummary).all()
+    return db.query(DbSummary).filter(DbSummary.isPublic == True)
 
 def get_summary(summaryId: int, db:Session) -> SummaryDisplay:
     summary = db.query(DbSummary).get(summaryId)
@@ -35,4 +35,14 @@ def filter_summary(filer1: Filter, db: Session):
             DbSummary.title.ilike(f"%{filer1.query}%")
             )
      ).all()
+    
+def add_summary_view_history(db: Session, current_user: DbUser, summary_id: int):
+    if current_user:
+        existing_entry = db.query(DbSummaryViewHistory).filter_by(userId=current_user.uid, summaryId=summary_id).first()
+
+        if existing_entry is None:
+            view_history_entry = DbSummaryViewHistory(userId=current_user.uid, summaryId=summary_id)
+            db.add(view_history_entry)
+            db.commit()
+            db.refresh(view_history_entry)
     

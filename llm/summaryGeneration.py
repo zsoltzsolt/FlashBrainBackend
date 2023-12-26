@@ -46,7 +46,7 @@ class SummaryGenerator(ABC):
     def generate_summaries(self, path: str):
         loader = self.get_loader(path)
         docs = loader.load()
-        prompt_template = """Summarize the following text in exactly 5, 2-3 sentence ideas formatted as a json. The number of ideas HAS to be 5,10 or 15. The json should be a list containing the generated ideas, and each idea has a 'title' and 'content' keys. This is the text:
+        prompt_template = """Summarize the following text in 5, 10 or 15, 5-8 sentence ideas formatted as a json. The number of ideas HAS to be 5,10 or 15. The json should be a list containing the generated ideas, and each idea has a 'title' and 'content' keys. This is the text:
         "{text}" """
         prompt = PromptTemplate.from_template(prompt_template)
 
@@ -56,7 +56,7 @@ class SummaryGenerator(ABC):
         stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
 
         docs = loader.load()
-        v = stuff_chain.run(docs)  # Modificarea aici
+        v = stuff_chain.run(docs)  
         print(v)
         return v
        

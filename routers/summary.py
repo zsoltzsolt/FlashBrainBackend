@@ -6,10 +6,12 @@ from fastapi import Depends
 from routers.schemas import SummaryDisplay, Filter
 from typing import List
 from routers.schemas import UserDisplay
-from auth.oauth2 import get_current_active_user
+from auth.oauth2 import get_current_active_user, get_user_if_available
 from fastapi.exceptions import HTTPException
 from fastapi import status
 from db.like import get_liked_summaries
+from typing import Optional
+from db.summary import add_summary_view_history
 
 router = APIRouter(
     prefix="/summary",
@@ -25,13 +27,21 @@ def get_liked_summaries1(db: Session = Depends(get_db), user: UserDisplay = Depe
     return get_liked_summaries(db, user)
 
 @router.get("/{summaryId}", response_model=SummaryDisplay)
-def get_all_summaries(summaryId: int, db: Session = Depends(get_db)):
+def get_all_summaries(
+    summaryId: int,
+    db: Session = Depends(get_db),
+    user: Optional[UserDisplay] = Depends(get_user_if_available),
+):
     summary = get_summary(summaryId, db)
     
     if summary is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Summary with id {summaryId} not found!")
-    else:
-        return summary
+
+    if user is not None:
+        add_summary_view_history(db, user, summary_id=summaryId)
+        
+    return summary
+
 
 @router.delete("/{summaryId}")
 def delete_summary1(summaryId: int, db: Session = Depends(get_db), user: UserDisplay = Depends(get_current_active_user)):

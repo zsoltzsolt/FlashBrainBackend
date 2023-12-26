@@ -6,6 +6,7 @@ from fastapi import Depends
 from routers.schemas import UserBase
 from db.user import create_user_func, update_streak
 import sqlalchemy
+from sqlalchemy import func
 from fastapi import HTTPException
 from fastapi import status
 from auth.oauth2 import get_current_active_user
@@ -13,6 +14,9 @@ from db.user import get_user_by_id
 from typing import Union, Optional
 from pydantic import BaseModel
 from fastapi.openapi.models import HTTPBase
+from db.models import DbUser, DbSummary, DbLike, DbSummaryViewHistory
+from db.user import calculate_score
+from db.like import get_liked_summaries
 
 
 router = APIRouter(
@@ -32,6 +36,29 @@ def create_user(request: UserBase, db: Session = Depends(get_db)):
         'access_token': access_token
     }
     
+@router.get('/leaderboard')
+def users_sorted_by_score(db: Session = Depends(get_db)):
+    try:
+        users = db.query(DbUser).all()
+
+        user_scores = []
+        for user in users:
+            summaries = db.query(DbSummary).filter(DbSummary.owner == user).all()
+            total_score = 0
+            for summary in summaries:
+                likes_count = db.query(func.count(DbLike.likeId)).filter(DbLike.summary == summary).scalar()
+                views_count = db.query(func.count(DbSummaryViewHistory.viewId)).filter(DbSummaryViewHistory.summary == summary).scalar()
+                summary_score = likes_count * 10 + 10 * views_count
+                total_score += summary_score
+            user_scores.append({"uid": user.uid, "username": user.username, "score": total_score})
+
+        sorted_users = sorted(user_scores, key=lambda x: x["score"], reverse=True)
+
+        return sorted_users
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 @router.get("/{uid}", response_model=UserDisplay)
 def get_user_by_id1(uid: int, db: Session = Depends(get_db)):
@@ -39,5 +66,24 @@ def get_user_by_id1(uid: int, db: Session = Depends(get_db)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {uid} not found!")
     else:
-        return user
+        user.liked_summaries = get_liked_summaries(db, user)
+        user_updated = update_streak(user)
+        score = calculate_score(user_updated.uid, db)
+        response = UserDisplay(
+        uid=user_updated.uid,
+        username=user_updated.username,
+        email=user_updated.email,
+        emailVerified=user_updated.emailVerified,
+        current_streak=user_updated.current_streak,
+        max_streak=user_updated.max_streak,
+        score=score,
+        summaries=user_updated.summaries
+    )
+        return response
+    
+
+
+    
+
+
         

@@ -14,6 +14,7 @@ from auth.oauth2 import get_current_active_user
 from db.models import DbLoginHistory
 from db.like import get_liked_summaries
 from db.user import update_streak
+from db.user import calculate_score
 
 router = APIRouter(
     prefix="/auth",
@@ -42,4 +43,15 @@ def generate_token(request: UserLogin, db: Session = Depends(get_db)):
 def verify_token(db:Session = Depends(get_db), user:UserDisplay = Depends(get_current_active_user)):
     user.liked_summaries = get_liked_summaries(db, user)
     user_updated = update_streak(user)
-    return user_updated  
+    score = calculate_score(user_updated.uid, db)
+    response = UserDisplay(
+        uid=user_updated.uid,
+        username=user_updated.username,
+        email=user_updated.email,
+        emailVerified=user_updated.emailVerified,
+        current_streak=user_updated.current_streak,
+        max_streak=user_updated.max_streak,
+        score=score,
+        summaries=user_updated.summaries
+    )
+    return response  
