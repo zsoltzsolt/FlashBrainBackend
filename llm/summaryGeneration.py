@@ -18,6 +18,7 @@ import os
 from time import sleep
 from email1.emailSender import send_email
 from email1.summaryReady import create_subject_body
+import requests
 
 class SummaryGenerator(ABC):
 
@@ -81,12 +82,17 @@ class SummaryGenerator(ABC):
         db.add(new_summary)
         db.commit()
         db.refresh(new_summary)
+        
+        
+        generate_image_url = f"{os.environ.get('IMAGE_HOST')}/generateImage"
 
         for json_item in newJson:
+            json_request = {"prompt": f"Generate a realistic image that can acompany a flashcard called {json_item['title']}. The image should be clear and it has educational purposes"}
+            generate_image_response = requests.post(generate_image_url, json=json_request)
             new_flash = FlashCardBase(
                 title=json_item['title'],
                 content=json_item['content'],
-                imagePath="https://www.shutterstock.com/image-photo/example-word-written-on-wooden-260nw-1765482248.jpg",
+                imagePath=f"{os.environ.get('IMAGE_HOST')}{generate_image_response.content.decode('utf-8')}",
                 summaryId=new_summary.summaryId
             )
             create_flash_card(new_flash, db)

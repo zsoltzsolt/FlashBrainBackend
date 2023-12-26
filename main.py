@@ -4,7 +4,6 @@ from db.database import engine
 from routers import user, email, files, videos, summary, like
 from auth import authentication
 from fastapi.middleware.cors import CORSMiddleware
-import os
 
 app = FastAPI()
 
