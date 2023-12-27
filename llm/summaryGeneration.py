@@ -87,7 +87,7 @@ class SummaryGenerator(ABC):
         generate_image_url = f"{os.environ.get('IMAGE_HOST')}/generateImage"
 
         for json_item in newJson:
-            json_request = {"prompt": f"Generate a realistic image that can acompany a flashcard called {json_item['title']}. The image should be clear and it has educational purposes"}
+            json_request = {"prompt": f"Generate a realistic image that can acompany a flashcard called {json_item['content']}. The image should be clear and it has educational purposes"}
             generate_image_response = requests.post(generate_image_url, json=json_request)
             new_flash = FlashCardBase(
                 title=json_item['title'],
