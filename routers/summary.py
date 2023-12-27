@@ -12,6 +12,7 @@ from fastapi import status
 from db.like import get_liked_summaries
 from typing import Optional
 from db.summary import add_summary_view_history
+import os
 
 router = APIRouter(
     prefix="/summary",
@@ -39,6 +40,9 @@ def get_all_summaries(
 
     if user is not None:
         add_summary_view_history(db, user, summary_id=summaryId)
+        
+    for flashcard in summary.flashcards:
+        flashcard.imagePath = f"{os.environ.get('IMAGE_HOST')}{flashcard.imagePath}"
         
     return summary
 

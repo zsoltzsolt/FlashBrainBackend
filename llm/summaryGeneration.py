@@ -92,7 +92,7 @@ class SummaryGenerator(ABC):
             new_flash = FlashCardBase(
                 title=json_item['title'],
                 content=json_item['content'],
-                imagePath=f"{os.environ.get('IMAGE_HOST')}{generate_image_response.content.decode('utf-8')}",
+                imagePath=f"{generate_image_response.content.decode('utf-8')}",
                 summaryId=new_summary.summaryId
             )
             create_flash_card(new_flash, db)
