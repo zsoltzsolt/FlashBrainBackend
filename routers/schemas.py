@@ -2,6 +2,12 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 
+class ViewDisplay(BaseModel):
+    viewId: Optional[int]
+    userId: Optional[int]
+    class Config():
+        from_attributes = True
+
 class LikeDisplay(BaseModel):
     likeId: Optional[int]
     summaryId: Optional[int]
@@ -25,6 +31,7 @@ class SummaryDisplay(BaseModel):
     categoryId: int
     flashcards: List[FlashCardDisplay] = []
     like: List[LikeDisplay] = []
+    viewHistory: List[ViewDisplay] = []
     isPublic: bool
     class Config():
         from_attributes = True
