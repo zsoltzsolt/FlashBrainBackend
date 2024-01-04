@@ -31,8 +31,10 @@ def schedule_summary_messages_task():
                                 score=score,
                                 summaries=user_updated.summaries
                                 )
-                subject, body = send_missing_you_email(user = user_details)
-                print(user_updated.email)
-                print(user.summaries)
-                if(user_updated.email == "jocuridukia10000@gmail.com"):
-                   send_email("zsolt.diriczi@student.upt.ro", subject, body)
+                print(user_updated.login_history[-1].loginDate)
+                no_days_since_last_login = (datetime.utcnow() - user_updated.login_history[-1].loginDate).days
+                if no_days_since_last_login > 2:
+                    subject, body = send_missing_you_email(user = user_details, no_days=no_days_since_last_login)
+                else:
+                    subject, body = send_statistics(user = user_details)
+                send_email(user_updated.email, subject, body)

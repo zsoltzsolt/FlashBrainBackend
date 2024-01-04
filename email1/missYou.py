@@ -1,7 +1,10 @@
 from routers.schemas import UserDisplay
 import os
+from datetime import datetime
 
-def send_missing_you_email(user: UserDisplay):
+
+def send_missing_you_email(user: UserDisplay, no_days: int):
+
     subject = f"🚀 Missing Your Spark, {user.username}! Rediscover the Power of FlashBrain Today"
 
     body = f"""<html>
@@ -119,7 +122,7 @@ def send_missing_you_email(user: UserDisplay):
     <div class="snow"></div>
     <div class="container">
         <h1>Hello <b>{user.username}</b>,</h1>
-        <p><b>It's been a little quiet on FlashBrain lately, and we wanted to reach out because we've missed your dynamic presence on our platform.</b></p>
+        <p><b>It's been a little quiet on FlashBrain lately, and we've missed your dynamic presence on our platform.</b></p>
         <div class="reasons">
             <div class="reason">
                 <span>1.</span> New Challenges Await: We've added a fresh set of mind-bending challenges tailored to elevate your cognitive skills.
@@ -133,7 +136,7 @@ def send_missing_you_email(user: UserDisplay):
         </div>
         <p class="disclaimer">To welcome you back, we've prepared a special surprise. Click the button below to rekindle the spark:</p>
         <p class="cta-button button"><a href="{os.environ.get("FRONTEND_URL")}">Resume Your Journey</a></p>
-        <p class="disclaimer">Thank you for being a valued part of the FlashBrain community. We can't wait to see you back in action!</p>
+        <p class="disclaimer">It's been {no_days} days since your last activity. Thank you for being a valued part of the FlashBrain community. We can't wait to see you back in action!</p>
         <p class="signature"><b>#FlashBrain 🚀</b></p>
     </div>
 </body>
