@@ -4,7 +4,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 scheduler = BackgroundScheduler()
 
-scheduler.add_job(schedule_summary_messages_task, 'interval', seconds = 4)
+scheduler.add_job(schedule_summary_messages_task, 'interval', seconds = 30)
 
 
 

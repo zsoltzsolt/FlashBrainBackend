@@ -9,6 +9,7 @@ from db.user import update_streak
 from db.user import calculate_score
 from email1.statistics import send_statistics
 from email1.emailSender import send_email
+from email1.missYou import send_missing_you_email
 
 def schedule_summary_messages_task():
     
@@ -30,8 +31,8 @@ def schedule_summary_messages_task():
                                 score=score,
                                 summaries=user_updated.summaries
                                 )
-                subject, body = send_statistics(user = user_details)
+                subject, body = send_missing_you_email(user = user_details)
                 print(user_updated.email)
                 print(user.summaries)
                 if(user_updated.email == "jocuridukia10000@gmail.com"):
-                    send_email("zsolt.diriczi@student.upt.ro", subject, body)
+                   send_email("zsolt.diriczi@student.upt.ro", subject, body)
