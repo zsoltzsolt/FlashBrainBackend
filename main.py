@@ -1,11 +1,15 @@
 from fastapi import FastAPI
 from db import models
 from db.database import engine
-from routers import user, email, files, videos, summary, like
+from routers import user, email, files, videos, summary, like, statistics
 from auth import authentication
 from fastapi.middleware.cors import CORSMiddleware
+from routers.statistics import scheduler
+
 
 app = FastAPI()
+
+scheduler.start()
 
 app.include_router(user.router)
 app.include_router(authentication.router)
@@ -14,6 +18,9 @@ app.include_router(files.router)
 app.include_router(videos.router)
 app.include_router(summary.router)
 app.include_router(like.router)
+
+
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,4 +34,9 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
+
+
 models.Base.metadata.create_all(engine)
+
+
+
