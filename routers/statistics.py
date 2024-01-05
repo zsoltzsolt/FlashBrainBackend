@@ -5,7 +5,7 @@ import os
 
 scheduler = BackgroundScheduler()
 
-scheduler.add_job(schedule_summary_messages_task, 'interval', days = os.environ.get("EMAIL_SEND_INTERVAL"))
+scheduler.add_job(schedule_summary_messages_task, 'interval', days = int(os.environ.get("EMAIL_SEND_INTERVAL")))
 
 
 
