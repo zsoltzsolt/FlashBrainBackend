@@ -47,11 +47,13 @@ def get_user_by_id(id: int, db: Session) -> UserDisplay:
 def update_streak(user, db: Session):
     login_history = user.login_history
 
+    print((login_history[-2].loginDate - datetime.utcnow()).days)
+    
     if not login_history:
         user.current_streak = 1
         user.max_streak = 1
-    elif (login_history[-2].login_date - datetime.utcnow()) == 0:
-        return 
+    elif len(login_history) > 1 and (login_history[-2].loginDate - datetime.utcnow()).days <= 0:
+        return user
     else:
         login_history_ordered = sorted(login_history, key=lambda x: x.loginDate, reverse=True)
         
@@ -59,10 +61,10 @@ def update_streak(user, db: Session):
         new_streak = 1
 
         for login in login_history_ordered:
-            login_date = login.loginDate.date()
+            loginDate = login.loginDate.date()
 
 
-            if (today - login_date).days == 1:
+            if (today - loginDate).days == 1:
                 new_streak += user.current_streak
                 break
             

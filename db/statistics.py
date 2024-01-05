@@ -19,7 +19,7 @@ def schedule_summary_messages_task():
             users = db.query(DbUser).all()
             for user in users:
                 user.liked_summaries = get_liked_summaries(db, user)
-                user_updated = update_streak(user)
+                user_updated = update_streak(user, db)
                 score = calculate_score(user_updated.uid, db)
                 user_details = UserDisplay(
                                 uid=user_updated.uid,

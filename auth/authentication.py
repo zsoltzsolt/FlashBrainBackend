@@ -42,7 +42,7 @@ def generate_token(request: UserLogin, db: Session = Depends(get_db)):
 @router.get("/token/status", response_model=UserDisplay)
 def verify_token(db:Session = Depends(get_db), user:UserDisplay = Depends(get_current_active_user)):
     user.liked_summaries = get_liked_summaries(db, user)
-    user_updated = update_streak(user)
+    user_updated = update_streak(user, db)
     score = calculate_score(user_updated.uid, db)
     response = UserDisplay(
         uid=user_updated.uid,
