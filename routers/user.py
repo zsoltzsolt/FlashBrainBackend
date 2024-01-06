@@ -67,7 +67,7 @@ def get_user_by_id1(uid: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {uid} not found!")
     else:
         user.liked_summaries = get_liked_summaries(db, user)
-        user_updated = update_streak(user)
+        user_updated = update_streak(user, db)
         score = calculate_score(user_updated.uid, db)
         response = UserDisplay(
         uid=user_updated.uid,

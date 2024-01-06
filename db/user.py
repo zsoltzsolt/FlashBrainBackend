@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import desc
 from fastapi.exceptions import HTTPException
 from sqlalchemy import func
+from datetime import datetime
 
 def create_user_func(db: Session, request: UserBase):
     new_user = DbUser(
@@ -43,34 +44,35 @@ def get_user_by_id(id: int, db: Session) -> UserDisplay:
      return db.query(DbUser).get(id)
 
 
-def update_streak(user):
+def update_streak(user, db: Session):
     login_history = user.login_history
 
+    print((login_history[-2].loginDate - datetime.utcnow()).days)
+    
     if not login_history:
-        # No login history, reset streaks
         user.current_streak = 1
         user.max_streak = 1
+    elif len(login_history) > 1 and (login_history[-2].loginDate - datetime.utcnow()).days <= 0:
+        return user
     else:
-        # Order login history by login date in descending order
         login_history_ordered = sorted(login_history, key=lambda x: x.loginDate, reverse=True)
         
         today = datetime.utcnow().date()
         new_streak = 1
 
-        # Iterăm prin istoricul de logări și numărăm zilele consecutive începând de la ziua curentă
         for login in login_history_ordered:
-            login_date = login.loginDate.date()
+            loginDate = login.loginDate.date()
 
 
-            if (today - login_date).days == 1:
-                # Dacă este ziua precedentă, continuăm șirul curent
+            if (today - loginDate).days == 1:
                 new_streak += user.current_streak
                 break
             
 
-        # Actualizăm streak-urile
         user.current_streak = new_streak
         user.max_streak = max(new_streak, user.max_streak)
+        
+        db.commit()
         
         return user
     
