@@ -31,8 +31,6 @@ def create_summary(request: SummarySourceBase,upload_file: UploadFile,db: Sessio
     
     id1 =PDFSummaryGenerator().generate_summary(summary, db)
     
-    sleep(100)
-    
     subject, body = create_subject_body(user.username, f"{os.environ.get('FRONTEND_URL')}/viewflashcard/{id1}")
     
     send_email(user.email, subject, body)
